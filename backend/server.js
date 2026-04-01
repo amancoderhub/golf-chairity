@@ -21,7 +21,13 @@ const app = express();
 // Global Middleware
 app.use(
     cors({
-        origin: process.env.FRONTEND_URL,
+        origin: function (origin, callback) {
+            if (!origin || origin.includes("vercel.app") || origin === process.env.FRONTEND_URL) {
+                callback(null, true);
+            } else {
+                callback(new Error("CORS blocked by project policy"));
+            }
+        },
         credentials: true
     })
 );
