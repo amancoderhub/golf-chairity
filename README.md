@@ -1,83 +1,70 @@
 # Golf Charity Subscription Platform
 
-Microservice-oriented MERN assignment based on the PRD.
+A unified MERN monolith application for managing golf scores, charity contributions, and subscriptions.
 
 ## Stack
 
-- Frontend: React + Vite + Tailwind CSS
-- API Gateway: Express
-- Auth service: Node.js + Express + JWT + bcrypt
-- Game service: Node.js + Express + MongoDB + Mongoose
-- Subscription service: Node.js + Express + Stripe
-- Database: MongoDB
+- **Frontend**: React + Vite + Tailwind CSS
+- **Backend (Monolith)**: Node.js + Express + MongoDB + Mongoose
+- **Payments**: Stripe Integration
+- **Email**: Resend API
+- **Database**: MongoDB Atlas
 
-## Project structure
+## Project Structure
 
-- `frontend`: React application with pages, reusable UI, routing, and API services
-- `frontend/src/components`: shared UI blocks like navbar, route guard, and stat cards
-- `frontend/src/pages`: landing, auth, dashboard, score, charity, subscription, and admin screens
-- `frontend/src/services`: Axios-based API layer with domain-specific clients
-- `frontend/src/context`: authentication state and token persistence
-- `backend/api-gateway`: single public backend entry that forwards traffic to internal services
-- `backend/services/auth-service`: user model, registration, login, profile fetch, and admin user listing
-- `backend/services/game-service`: charity, score, draw, and admin score endpoints
-- `backend/services/subscription-service`: Stripe checkout, webhook handling, and subscription persistence
-- `controllers`: request handlers
-- `routes`: endpoint registration
-- `models`: database schemas
-- `middleware`: auth guards and error handlers
-- `services`: reusable business logic for cleaner controllers
-- `config`: environment and MongoDB setup
+- `frontend`: React application (Vite)
+  - `src/components`: Reusable UI components (Navbar, StatCards, etc.)
+  - `src/pages`: Functional screens (Landing, Dashboard, Score Entry, Admin Panel)
+  - `src/services`: API client layer
+- `backend`: Unified Express server
+  - `controllers/`: Logic for Auth, Game, Charity, and Subscriptions
+  - `models/`: Mongoose schemas (User, Score, Charity, Draw, Subscription)
+  - `routes/`: API endpoints
+  - `middleware/`: Auth guards and Error handlers
+  - `config/`: Database and Stripe configuration
+  - `server.js`: Main application entry point (merged logic)
 
-## Domain relationships and indexing
+## Admin Access
 
-- `User -> Charity`: `selectedCharity` stores the chosen charity reference for each user
-- `Score -> User`: each score belongs to a single user through `userId`
-- `Subscription -> User`: each subscription record belongs to one user through `userId`
-- `Draw -> Winners -> User`: each draw stores winner snapshots and the user reference for that result
-- `User.email`: unique index for fast login lookup and duplicate prevention
-- `User.subscriptionStatus`, `User.selectedCharity`, `User.stripeCustomerId`: indexed for dashboard and payment workflows
-- `Score.userId + date + createdAt`: indexed to fetch the latest five scores quickly
-- `Subscription.userId + createdAt`: indexed to fetch the newest subscription status efficiently
-- `Draw.createdAt`: indexed to fetch the latest draw quickly
+To access the administrative features, use the following default admin credentials:
 
-## Environment files
+- **Email**: `srivastavasaurbhji@gmail.com`
+- **Password**: `123456789`
 
-Backend now uses one shared root env file. Frontend keeps its own Vite env file.
+### Admin Functionalities:
+- **User Management**: View all registered users.
+- **Role Promotion**: Directly promote any standard user to an **Admin** role via the Admin Panel.
+- **Score Monitoring**: View all submitted scores across the platform.
+- **Draw Management**: Run and publish luck draws.
 
-- `backend/.env` for all backend services and gateway
-- `frontend/.env` for frontend `VITE_*` values
+## Installation & Running Locally
 
-## Run locally
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+2. **Environment Setup**:
+   - Configure `backend/.env` (MongoDB URI, JWT Secret, Stripe Keys, Resend API Key).
+   - Configure `frontend/.env` (`VITE_API_URL=http://localhost:4000`).
+3. **Seed Data**:
+   ```bash
+   npm run seed:charities -w backend
+   ```
+4. **Start Development Server**:
+   ```bash
+   npm run dev
+   ```
+   - Frontend starts on: `http://localhost:5173`
+   - Backend starts on: `http://localhost:4000`
 
-1. Install dependencies with `npm install`
-2. Fill `backend/.env` and `frontend/.env` with your real values
-3. Seed sample charities with `npm run seed:charities -w backend/services/game-service`
-4. Start everything with `npm run dev` or run backend only with `npm run dev:backend`
+## Core Features
 
-## Default ports
+- **Score Tracking**: Users can submit scores; the system keeps the latest 5 entries.
+- **Charity Selection**: Users select a charity for their game contributions.
+- **Luck Draw**: Automated system to evaluate winners based on score matches (3, 4, or 5 matches).
+- **Pro Subscriptions**: Stripe-integrated monthly/yearly plans for premium features.
+- **Webhooks**: Deployment-ready Stripe webhook signature verification.
 
-- Gateway: `4000`
-- Auth service: `4001`
-- Game service: `4002`
-- Subscription service: `4003`
-- Frontend: `5173`
+## Deployment
 
-## Notes
-
-- The score system keeps only the latest five scores per user and removes older entries automatically
-- The draw system generates five unique numbers between `1` and `45`
-- Winners are grouped by `3-match`, `4-match`, and `5-match` logic
-- Stripe webhook support is wired for `checkout.session.completed`
-- To access the admin panel, set a user's `role` to `admin` in MongoDB after signup
-
-
-## Simpler backend start
-
-- From project root: `npm run dev:backend`
-- From inside `backend`: `node main.js`
-
-
-pass - 5rGkcXkivn8F9qVv
-user - saurbhsrivastav6_db_user
-
+The backend is configured with dynamic CORS to support deployment on platforms like Vercel or Render. Ensure `FRONTEND_URL` is correctly set in your production environment.
