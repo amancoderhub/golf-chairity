@@ -39,7 +39,7 @@ app.post("/webhooks/stripe", express.raw({ type: 'application/json' }), handleSt
 app.use(express.json());
 
 // Health Check
-app.get("/health", (_req, res) => {
+app.get("/api/health", (_req, res) => {
     res.json({ status: "ok", service: "golf-chairity-monolith" });
 });
 
