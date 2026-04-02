@@ -1,7 +1,6 @@
 import "./shared/loadEnv.js";
 import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
+import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -14,8 +13,6 @@ import charityRoutes from "./routes/charityRoutes.js";
 import drawRoutes from "./routes/drawRoutes.js";
 import scoreRoutes from "./routes/scoreRoutes.js";
 import subscriptionRoutes, { handleStripeWebhook } from "./routes/subscriptionRoutes.js";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Middleware
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
@@ -55,26 +52,9 @@ app.use("/api/game", drawRoutes);
 app.use("/api/game", scoreRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 
-// --- Serving Frontend ---
-const frontendPath = path.join(__dirname, "../frontend/dist");
+app.use("/api/subscriptions", subscriptionRoutes);
 
-// Explicitly handle root for health checks
-app.get("/", (req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
-});
-
-// Explicitly serve assets directory
-app.use("/assets", express.static(path.join(frontendPath, "assets")));
-// Serve other static files
-app.use(express.static(frontendPath));
-
-// For any non-API route, serve index.html
-app.get("*", (req, res, next) => {
-    if (req.path.startsWith("/api/")) {
-        return next();
-    }
-    res.sendFile(path.join(frontendPath, "index.html"));
-});
+// Error Handling
 
 // Error Handling
 app.use(notFound);
