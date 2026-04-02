@@ -62,8 +62,10 @@ app.use(errorHandler);
 
 const startServer = async () => {
     try {
+        console.log("Starting server process...");
         await connectDB();
         const port = process.env.PORT || 4000;
+        console.log(`Port detected: ${port}. Environment: ${process.env.NODE_ENV || 'development'}`);
         app.listen(port, () => {
             console.log(`Backend server listening on port ${port}`);
         });
