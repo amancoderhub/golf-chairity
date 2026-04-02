@@ -57,6 +57,12 @@ app.use("/api/subscriptions", subscriptionRoutes);
 
 // --- Serving Frontend ---
 const frontendPath = path.join(__dirname, "../frontend/dist");
+
+// Explicitly handle root for health checks (Render often uses HEAD / or GET /)
+app.get("/", (req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
+});
+
 app.use(express.static(frontendPath));
 
 // For any non-API route that doesn't match a static file, serve index.html
