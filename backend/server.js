@@ -1,6 +1,5 @@
 import "./shared/loadEnv.js";
 import express from "express";
-import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -51,10 +50,6 @@ app.use("/api/game", charityRoutes);
 app.use("/api/game", drawRoutes);
 app.use("/api/game", scoreRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
-
-app.use("/api/subscriptions", subscriptionRoutes);
-
-// Error Handling
 
 // Error Handling
 app.use(notFound);
