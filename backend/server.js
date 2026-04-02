@@ -58,23 +58,22 @@ app.use("/api/subscriptions", subscriptionRoutes);
 // --- Serving Frontend ---
 const frontendPath = path.join(__dirname, "../frontend/dist");
 
-// Explicitly handle root for health checks (Render often uses HEAD / or GET /)
+// Explicitly handle root for health checks
 app.get("/", (req, res) => {
     res.sendFile(path.join(frontendPath, "index.html"));
 });
 
+// Explicitly serve assets directory
+app.use("/assets", express.static(path.join(frontendPath, "assets")));
+// Serve other static files
 app.use(express.static(frontendPath));
 
-// For any non-API route that doesn't match a static file, serve index.html
+// For any non-API route, serve index.html
 app.get("*", (req, res, next) => {
     if (req.path.startsWith("/api/")) {
         return next();
     }
-    res.sendFile(path.join(frontendPath, "index.html"), (err) => {
-        if (err) {
-            next();
-        }
-    });
+    res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 // Error Handling
