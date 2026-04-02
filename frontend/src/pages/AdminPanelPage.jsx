@@ -166,7 +166,7 @@ export const AdminPanelPage = () => {
             <h2 className="text-xl font-semibold text-slate-900">Score management</h2>
             <p className="mt-1 text-sm text-slate-600">View the stored rounds tied to each account.</p>
           </div>
-          <div className="overflow-x-auto">
+          <div className="overflow-auto max-h-[400px]">
             <table className="min-w-full text-left text-sm">
               <thead className="bg-slate-950 text-slate-200">
                 <tr>
