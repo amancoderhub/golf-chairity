@@ -42,6 +42,11 @@ app.post("/webhooks/stripe", express.raw({ type: 'application/json' }), handleSt
 
 app.use(express.json());
 
+// Handle HEAD requests (Render health checks)
+app.head("*", (req, res) => {
+    res.status(200).end();
+});
+
 // Health Check
 app.get("/api/health", (_req, res) => {
     res.json({ status: "ok", service: "golf-chairity-monolith" });
@@ -64,8 +69,12 @@ app.get("*", (req, res, next) => {
     if (req.path.startsWith("/api/")) {
         return next();
     }
+
+    console.log("Serving frontend for:", req.path);
+
     res.sendFile(path.join(frontendPath, "index.html"), (err) => {
         if (err) {
+            console.error("Frontend not found:", err);
             next();
         }
     });
