@@ -1,5 +1,7 @@
 import "./shared/loadEnv.js";
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -12,6 +14,8 @@ import charityRoutes from "./routes/charityRoutes.js";
 import drawRoutes from "./routes/drawRoutes.js";
 import scoreRoutes from "./routes/scoreRoutes.js";
 import subscriptionRoutes, { handleStripeWebhook } from "./routes/subscriptionRoutes.js";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Middleware
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
@@ -50,6 +54,17 @@ app.use("/api/game", charityRoutes);
 app.use("/api/game", drawRoutes);
 app.use("/api/game", scoreRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
+
+// --- Serving Frontend ---
+const frontendPath = path.join(__dirname, "../frontend/dist");
+app.use(express.static(frontendPath));
+
+// For any non-API route that doesn't match a static file, serve index.html
+app.get("*", (req, res) => {
+    if (!req.path.startsWith("/api/")) {
+        res.sendFile(path.join(frontendPath, "index.html"));
+    }
+});
 
 // Error Handling
 app.use(notFound);
