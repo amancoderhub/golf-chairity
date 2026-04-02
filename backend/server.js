@@ -60,10 +60,15 @@ const frontendPath = path.join(__dirname, "../frontend/dist");
 app.use(express.static(frontendPath));
 
 // For any non-API route that doesn't match a static file, serve index.html
-app.get("*", (req, res) => {
-    if (!req.path.startsWith("/api/")) {
-        res.sendFile(path.join(frontendPath, "index.html"));
+app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api/")) {
+        return next();
     }
+    res.sendFile(path.join(frontendPath, "index.html"), (err) => {
+        if (err) {
+            next();
+        }
+    });
 });
 
 // Error Handling
